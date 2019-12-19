@@ -28,3 +28,24 @@ class AioQQAuth:
                 return result
         except asyncio.TimeoutError:
             raise AioQQTimeoutError()
+
+    async def get_unionid(self, access_token):
+        params = {
+            'access_token': access_token,
+            'unionid': 1,
+        }
+
+        unionid_url = 'https://graph.qq.com/oauth2.0/me'
+
+        try:
+            async with self._session.get(unionid_url, params=params,
+                                         timeout=self.timeout) as resp:
+                resp_text = await resp.text()
+                json_text = re.sub(r'^callback\(', '', resp_text)
+                json_text = re.sub(r'\);.*$', '', json_text).strip()
+                result = json.loads(json_text)
+                if result.get('error'):
+                    raise AioQQAuthError(result)
+                return result.get('unionid')
+        except asyncio.TimeoutError:
+            raise AioQQTimeoutError()
