@@ -30,7 +30,11 @@ class AioQQAuth:
         except asyncio.TimeoutError:
             raise AioQQTimeoutError()
 
-    async def get_unionid(self, access_token):
+    async def get_id_info(self, access_token):
+        """
+        :param access_token:
+        :return: {'union_id': '', 'open_id': ''}
+        """
         params = {
             'access_token': access_token,
             'unionid': 1,
