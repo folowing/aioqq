@@ -1,3 +1,4 @@
+import re
 import asyncio
 import json
 
@@ -46,6 +47,9 @@ class AioQQAuth:
                 result = json.loads(json_text)
                 if result.get('error'):
                     raise AioQQAuthError(result)
-                return result.get('unionid')
+                return {
+                    'union_id': result.get('unionid'),
+                    'open_id': result.get('openid'),
+                }
         except asyncio.TimeoutError:
             raise AioQQTimeoutError()
